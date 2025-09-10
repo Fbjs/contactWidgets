@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Phone, PhoneOutgoing, Loader2 } from "lucide-react";
@@ -37,6 +37,7 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function ClickToCallWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+  const widgetRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<ClickToCallValues>({
     resolver: zodResolver(ClickToCallSchema),
@@ -46,6 +47,21 @@ export default function ClickToCallWidget() {
   });
 
   const { isSubmitting } = form.formState;
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        widgetRef.current &&
+        !widgetRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [widgetRef]);
 
   const onSubmit = async (values: ClickToCallValues) => {
     const result = await clickToCall(values);
@@ -73,13 +89,18 @@ export default function ClickToCallWidget() {
     }
     // If it's open, the default form submission is handled by the form's onSubmit
   };
-  
+
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER;
   const whatsappMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE;
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage || "")}`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+    whatsappMessage || ""
+  )}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div
+      ref={widgetRef}
+      className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
+    >
       <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
         <Button
           size="icon"
