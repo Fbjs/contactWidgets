@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Phone, Send, Loader2 } from "lucide-react";
+import { Phone, PhoneOutgoing, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,7 +107,7 @@ export default function ClickToCallWidget() {
             {isSubmitting ? (
               <Loader2 className="h-7 w-7 animate-spin" />
             ) : isOpen ? (
-              <Send className="h-6 w-6" />
+              <PhoneOutgoing className="h-6 w-6" />
             ) : (
               <Phone className="h-7 w-7" />
             )}
