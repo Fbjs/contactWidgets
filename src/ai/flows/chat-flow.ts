@@ -9,6 +9,7 @@
 
 import { ai } from "@/ai/genkit";
 import { z } from "zod";
+import { gpt4oMini } from "genkitx-openai";
 
 const ChatMessageSchema = z.object({
   role: z.enum(["user", "model"]),
@@ -34,7 +35,7 @@ const chatFlow = ai.defineFlow(
     const systemPrompt = `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
     const response = await ai.generate({
-      model: "googleai/gemini-1.5-flash-latest",
+      model: gpt4oMini,
       prompt: newMessage,
       history: [{ role: "system", content: systemPrompt }, ...history],
     });
