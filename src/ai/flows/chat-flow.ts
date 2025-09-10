@@ -33,10 +33,7 @@ const chatFlow = ai.defineFlow(
   async ({ history, newMessage }) => {
     const systemPrompt = `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
-    const model = ai.model("googleai/gemini-2.5-flash");
-
     const response = await ai.generate({
-      model,
       prompt: newMessage,
       history: [{ role: "system", content: systemPrompt }, ...history],
     });
