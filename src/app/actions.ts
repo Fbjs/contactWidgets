@@ -16,7 +16,17 @@ export async function clickToCall(data: ClickToCallValues) {
   // Remove spaces and hyphens from the phone number
   const sanitizedPhone = phone.replace(/[\s-]/g, "");
   const phoneNumber = `56${sanitizedPhone}`;
-  const url = `https://app.neighbour.cl/api/clicktocall/${phoneNumber}`;
+  
+  const baseUrl = process.env.CLICK_TO_CALL_URL;
+  if (!baseUrl) {
+    console.error("La variable de entorno CLICK_TO_CALL_URL no está definida.");
+    return {
+      success: false,
+      error: "La configuración del servidor está incompleta.",
+    };
+  }
+  
+  const url = `${baseUrl}/${phoneNumber}`;
 
   try {
     console.log(`Iniciando llamada a: ${phoneNumber} via ${url}`);
