@@ -1,6 +1,7 @@
 "use server";
 
 import { ClickToCallSchema, ClickToCallValues } from "@/lib/schemas";
+import { chat, ChatHistory, ChatMessage } from "@/ai/flows/chat-flow";
 
 export async function clickToCall(data: ClickToCallValues) {
   const validatedFields = ClickToCallSchema.safeParse(data);
@@ -55,4 +56,11 @@ export async function clickToCall(data: ClickToCallValues) {
       error: "Ocurrió un error desconocido al iniciar la llamada.",
     };
   }
+}
+
+export async function sendChatMessage(
+  history: ChatHistory,
+  newMessage: string
+): Promise<ChatMessage> {
+  return await chat({ history, newMessage });
 }

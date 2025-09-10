@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Phone, PhoneOutgoing, Loader2 } from "lucide-react";
+import { Phone, PhoneOutgoing, Loader2, MessageCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { clickToCall } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { ClickToCallSchema, type ClickToCallValues } from "@/lib/schemas";
+import ChatWidget from "./chat-widget";
 
 function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -35,7 +36,8 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function ClickToCallWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCallInputOpen, setIsCallInputOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const { toast } = useToast();
   const widgetRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +56,8 @@ export default function ClickToCallWidget() {
         widgetRef.current &&
         !widgetRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
+        setIsCallInputOpen(false);
+        setIsChatOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -71,7 +74,7 @@ export default function ClickToCallWidget() {
         title: "Llamada en curso",
         description: "Te estamos llamando...",
       });
-      setIsOpen(false);
+      setIsCallInputOpen(false);
       form.reset();
     } else {
       toast({
@@ -82,12 +85,17 @@ export default function ClickToCallWidget() {
     }
   };
 
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!isOpen) {
+  const handleCallButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isCallInputOpen) {
       e.preventDefault();
-      setIsOpen(true);
+      setIsCallInputOpen(true);
+      setIsChatOpen(false);
     }
-    // If it's open, the default form submission is handled by the form's onSubmit
+  };
+
+  const handleChatButtonClick = () => {
+    setIsChatOpen((prev) => !prev);
+    if (isCallInputOpen) setIsCallInputOpen(false);
   };
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER;
@@ -101,6 +109,7 @@ export default function ClickToCallWidget() {
       ref={widgetRef}
       className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
+      {isChatOpen && <ChatWidget />}
       <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
         <Button
           size="icon"
@@ -110,6 +119,14 @@ export default function ClickToCallWidget() {
           <WhatsAppIcon className="h-7 w-7 text-white" />
         </Button>
       </a>
+      <Button
+        size="icon"
+        className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg"
+        aria-label="Abrir chat"
+        onClick={handleChatButtonClick}
+      >
+        <MessageCircle className="h-7 w-7" />
+      </Button>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -118,9 +135,9 @@ export default function ClickToCallWidget() {
           <div
             className={cn(
               "transition-all duration-300 ease-in-out flex flex-col",
-              isOpen ? "w-48 opacity-100" : "w-0 opacity-0"
+              isCallInputOpen ? "w-48 opacity-100" : "w-0 opacity-0"
             )}
-            aria-hidden={!isOpen}
+            aria-hidden={!isCallInputOpen}
           >
             <FormField
               control={form.control}
@@ -133,7 +150,7 @@ export default function ClickToCallWidget() {
                       {...field}
                       className={cn(
                         "bg-card/90 backdrop-blur-sm border-primary/50 focus-visible:ring-primary shadow-lg",
-                        !isOpen && "hidden" // Ensure it's not tabbable when hidden
+                        !isCallInputOpen && "hidden"
                       )}
                       aria-label="Phone number input"
                       autoComplete="tel"
@@ -149,13 +166,15 @@ export default function ClickToCallWidget() {
             type="submit"
             size="icon"
             className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg flex-shrink-0"
-            onClick={handleButtonClick}
+            onClick={handleCallButtonClick}
             disabled={isSubmitting}
-            aria-label={isOpen ? "Iniciar llamada" : "Abrir campo de teléfono"}
+            aria-label={
+              isCallInputOpen ? "Iniciar llamada" : "Abrir campo de teléfono"
+            }
           >
             {isSubmitting ? (
               <Loader2 className="h-7 w-7 animate-spin" />
-            ) : isOpen ? (
+            ) : isCallInputOpen ? (
               <PhoneOutgoing className="h-6 w-6" />
             ) : (
               <Phone className="h-7 w-7" />
