@@ -6,19 +6,43 @@ export async function clickToCall(data: ClickToCallValues) {
   const validatedFields = ClickToCallSchema.safeParse(data);
 
   if (!validatedFields.success) {
-    // This case should ideally not be hit if client-side validation is working
     return {
       success: false,
       error: "Número de teléfono inválido.",
     };
   }
 
-  console.log(`Iniciando llamada a: ${validatedFields.data.phone}`);
+  const { phone } = validatedFields.data;
+  // Remove spaces and hyphens from the phone number
+  const sanitizedPhone = phone.replace(/[\s-]/g, "");
+  const phoneNumber = `56${sanitizedPhone}`;
+  const url = `https://app.neighbour.cl/api/clicktocall/${phoneNumber}`;
 
-  // Simulate network delay for an API call
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  try {
+    console.log(`Iniciando llamada a: ${phoneNumber} via ${url}`);
 
-  // In a real application, you would have logic here to handle the success or failure of the call API.
-  // For this demonstration, we'll assume it's always successful.
-  return { success: true };
+    const response = await fetch(url);
+
+    if (response.ok) {
+      console.log("Llamada iniciada con éxito");
+      return { success: true };
+    } else {
+      console.error(`Error en la API: ${response.status} ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error("Cuerpo del error:", errorBody);
+      return {
+        success: false,
+        error: `Error de la API: ${response.statusText}`,
+      };
+    }
+  } catch (error) {
+    console.error("Error al realizar la llamada fetch:", error);
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+    return {
+      success: false,
+      error: "Ocurrió un error desconocido al iniciar la llamada.",
+    };
+  }
 }
