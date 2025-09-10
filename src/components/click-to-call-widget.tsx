@@ -86,11 +86,13 @@ export default function ClickToCallWidget() {
   };
 
   const handleCallButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // This prevents the form from submitting when we just want to open the input
     if (!isCallInputOpen) {
       e.preventDefault();
       setIsCallInputOpen(true);
       setIsChatOpen(false);
     }
+    // If the input is already open, the default form submission will proceed.
   };
 
   const handleChatButtonClick = () => {
@@ -110,6 +112,7 @@ export default function ClickToCallWidget() {
       className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
       {isChatOpen && <ChatWidget />}
+
       <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
         <Button
           size="icon"
@@ -119,6 +122,7 @@ export default function ClickToCallWidget() {
           <WhatsAppIcon className="h-7 w-7 text-white" />
         </Button>
       </a>
+
       <Button
         size="icon"
         className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg"
@@ -127,6 +131,7 @@ export default function ClickToCallWidget() {
       >
         <MessageCircle className="h-7 w-7" />
       </Button>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
