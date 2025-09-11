@@ -106,87 +106,103 @@ export default function ClickToCallWidget() {
     whatsappMessage || ""
   )}`;
 
+  const isClickToCallEnabled =
+    process.env.NEXT_PUBLIC_CLICK_TO_CALL_ENABLED === "true";
+  const isChatbotEnabled = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === "true";
+  const isWhatsappEnabled =
+    process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true";
+
+  if (!isClickToCallEnabled && !isChatbotEnabled && !isWhatsappEnabled) {
+    return null;
+  }
+
   return (
     <div
       ref={widgetRef}
       className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
-      {isChatOpen && <ChatWidget />}
+      {isChatbotEnabled && isChatOpen && <ChatWidget />}
 
-      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+      {isWhatsappEnabled && (
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+          <Button
+            size="icon"
+            className="rounded-full w-14 h-14 bg-[#25D366] hover:bg-[#1DA851] shadow-lg"
+            aria-label="Contactar por WhatsApp"
+          >
+            <WhatsAppIcon className="h-7 w-7 text-white" />
+          </Button>
+        </a>
+      )}
+
+      {isChatbotEnabled && (
         <Button
           size="icon"
-          className="rounded-full w-14 h-14 bg-[#25D366] hover:bg-[#1DA851] shadow-lg"
-          aria-label="Contactar por WhatsApp"
+          className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg"
+          aria-label="Abrir chat"
+          onClick={handleChatButtonClick}
         >
-          <WhatsAppIcon className="h-7 w-7 text-white" />
+          <MessageCircle className="h-7 w-7" />
         </Button>
-      </a>
+      )}
 
-      <Button
-        size="icon"
-        className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg"
-        aria-label="Abrir chat"
-        onClick={handleChatButtonClick}
-      >
-        <MessageCircle className="h-7 w-7" />
-      </Button>
-
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex items-start gap-3"
-        >
-          <div
-            className={cn(
-              "transition-all duration-300 ease-in-out flex flex-col",
-              isCallInputOpen ? "w-48 opacity-100" : "w-0 opacity-0"
-            )}
-            aria-hidden={!isCallInputOpen}
+      {isClickToCallEnabled && (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex items-start gap-3"
           >
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Tu número de teléfono"
-                      {...field}
-                      className={cn(
-                        "bg-card/90 backdrop-blur-sm border-primary/50 focus-visible:ring-primary shadow-lg",
-                        !isCallInputOpen && "hidden"
-                      )}
-                      aria-label="Phone number input"
-                      autoComplete="tel"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs text-destructive-foreground bg-destructive/90 rounded px-2 py-1 mt-1" />
-                </FormItem>
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out flex flex-col",
+                isCallInputOpen ? "w-48 opacity-100" : "w-0 opacity-0"
               )}
-            />
-          </div>
+              aria-hidden={!isCallInputOpen}
+            >
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder="Tu número de teléfono"
+                        {...field}
+                        className={cn(
+                          "bg-card/90 backdrop-blur-sm border-primary/50 focus-visible:ring-primary shadow-lg",
+                          !isCallInputOpen && "hidden"
+                        )}
+                        aria-label="Phone number input"
+                        autoComplete="tel"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs text-destructive-foreground bg-destructive/90 rounded px-2 py-1 mt-1" />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-          <Button
-            type="submit"
-            size="icon"
-            className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg flex-shrink-0"
-            onClick={handleCallButtonClick}
-            disabled={isSubmitting}
-            aria-label={
-              isCallInputOpen ? "Iniciar llamada" : "Abrir campo de teléfono"
-            }
-          >
-            {isSubmitting ? (
-              <Loader2 className="h-7 w-7 animate-spin" />
-            ) : isCallInputOpen ? (
-              <PhoneOutgoing className="h-6 w-6" />
-            ) : (
-              <Phone className="h-7 w-7" />
-            )}
-          </Button>
-        </form>
-      </Form>
+            <Button
+              type="submit"
+              size="icon"
+              className="rounded-full w-14 h-14 bg-primary hover:bg-accent shadow-lg flex-shrink-0"
+              onClick={handleCallButtonClick}
+              disabled={isSubmitting}
+              aria-label={
+                isCallInputOpen ? "Iniciar llamada" : "Abrir campo de teléfono"
+              }
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-7 w-7 animate-spin" />
+              ) : isCallInputOpen ? (
+                <PhoneOutgoing className="h-6 w-6" />
+              ) : (
+                <Phone className="h-7 w-7" />
+              )}
+            </Button>
+          </form>
+        </Form>
+      )}
     </div>
   );
 }

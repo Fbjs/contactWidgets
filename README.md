@@ -31,20 +31,31 @@ npm install
 Crea un archivo llamado `.env` en la raíz del proyecto y añade las siguientes variables. Puedes usar el archivo `.env.example` como guía.
 
 ```plaintext
+# === Configuración de OpenAI ===
 # Clave de la API de OpenAI para el asistente de chat
 OPENAI_API_KEY="sk-..."
 
+# === Configuración del Widget ===
+# Habilita ('true') o deshabilita ('false') cada botón del widget flotante.
+NEXT_PUBLIC_CLICK_TO_CALL_ENABLED="true"
+NEXT_PUBLIC_CHATBOT_ENABLED="true"
+NEXT_PUBLIC_WHATSAPP_ENABLED="true"
+
+# === Configuración del Asistente de Chat ===
 # (Opcional) Instrucciones personalizadas para el chatbot. Define su personalidad y contexto.
 NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT="Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable."
 
+# === Configuración de Click to Call ===
 # URL del servicio o endpoint que se encargará de realizar la llamada telefónica.
 CLICK_TO_CALL_URL="https://tu-api.com/call"
 
+# === Configuración de WhatsApp ===
 # Número de teléfono para el botón de WhatsApp (incluyendo el código de país, sin el '+').
 NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER="1234567890"
 
 # (Opcional) Mensaje pre-llenado para cuando un usuario haga clic en el botón de WhatsApp.
 NEXT_PUBLIC_WHATSAPP_MESSAGE="Hola, estoy interesado en sus servicios."
+
 ```
 
 ### 4. Ejecutar el Servidor de Desarrollo
