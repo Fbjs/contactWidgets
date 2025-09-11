@@ -16,6 +16,7 @@ export default function ChatWidget() {
   const [inputValue, setInputValue] = useState("");
   const [isPending, startTransition] = useTransition();
   const viewportRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     if (viewportRef.current) {
@@ -28,7 +29,10 @@ export default function ChatWidget() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [history]);
+    if (!isPending) {
+      inputRef.current?.focus();
+    }
+  }, [history, isPending]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,6 +43,7 @@ export default function ChatWidget() {
 
     setHistory(newHistory);
     setInputValue("");
+    inputRef.current?.focus();
 
     startTransition(async () => {
       const botResponse = await sendChatMessage(newHistory, inputValue);
@@ -104,10 +109,12 @@ export default function ChatWidget() {
       <div className="p-4 border-t">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <Input
+            ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Escribe un mensaje..."
             disabled={isPending}
+            autoFocus
           />
           <Button type="submit" size="icon" disabled={isPending}>
             <Send className="h-4 w-4" />
