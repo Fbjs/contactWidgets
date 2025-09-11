@@ -1,52 +1,86 @@
+
 import ClickToCallWidget from "@/components/click-to-call-widget";
 
 export default function Home() {
+  const isClickToCallEnabled =
+    process.env.NEXT_PUBLIC_CLICK_TO_CALL_ENABLED === "true";
+  const isChatbotEnabled = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === "true";
+  const isWhatsappEnabled =
+    process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true";
+
+  const enabledWidgets = [
+    isClickToCallEnabled && "Click to Call",
+    isChatbotEnabled && "Asistente de Chat",
+    isWhatsappEnabled && "WhatsApp",
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const embedCode = `<iframe src="${
+    new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:9002").origin
+  }/embed" style="position: fixed; bottom: 0; right: 0; border: none; width: 400px; height: 600px; z-index: 9999;"></iframe>`;
+
   return (
     <>
       <main className="container mx-auto p-8 min-h-screen">
         <header className="text-center my-12 md:my-20">
           <h1 className="text-4xl md:text-6xl font-bold font-headline text-primary mb-4">
-            Click2Call Widget
+            Contact Widget
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Este es un demo de un botón flotante de "Click to Call".
-            Desplázate hacia abajo para ver que el botón permanece fijo en su
-            lugar.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            Este widget flotante te permite añadir funciones de contacto a tu
+            sitio web de forma sencilla.
           </p>
         </header>
 
-        <div className="space-y-6 text-lg max-w-4xl mx-auto leading-relaxed">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p>
-            Integer vitae justo eget magna fermentum iaculis. Proin gravida nibh
-            vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum
-            auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.
-            Duis sed odio sit amet nibh vulputate cursus a sit amet mauris.
-            Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a
-            ornare odio. Sed non mauris vitae erat consequat auctor eu in elit.
-            Class aptent taciti sociosqu ad litora torquent per conubia nostra,
-            per inceptos himenaeos.
-          </p>
-          <p>
-            Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.
-            Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper
-            libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc,
-            blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio
-            et ante tincidunt tempus. Donec vitae sapien ut libero venenatis
-            faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus
-            tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec
-            sodales sagittis magna.
-          </p>
+        <div className="space-y-12 max-w-4xl mx-auto leading-relaxed">
+          <section>
+            <h2 className="text-2xl font-bold mb-4 border-b pb-2">
+              Cómo Instalar el Widget en tu Sitio Web
+            </h2>
+            <p className="mb-4">
+              Para agregar el widget de contacto a tu página web, simplemente
+              copia y pega el siguiente código HTML justo antes de la etiqueta
+              de cierre `{'</body>'}` en tu archivo HTML.
+            </p>
+            <div className="bg-card p-4 rounded-lg shadow">
+              <pre className="text-sm bg-muted/50 p-4 rounded-md overflow-x-auto">
+                <code>{embedCode}</code>
+              </pre>
+            </div>
+            <p className="mt-4 text-muted-foreground text-sm">
+              El widget se cargará en una ventana flotante (iframe) en la
+              esquina inferior derecha de tu página, sin interferir con el
+              contenido existente.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold mb-4 border-b pb-2">
+              Configuración Actual
+            </h2>
+            <p className="mb-4">
+              La configuración del widget se gestiona desde el archivo `.env`
+              de este proyecto. Según tu configuración actual, los siguientes
+              módulos están{" "}
+              <span className="font-semibold text-primary">activados</span>:
+            </p>
+            <ul className="list-disc list-inside bg-card p-4 rounded-lg shadow">
+              {enabledWidgets.split(", ").map((widget) => (
+                <li key={widget}>{widget}</li>
+              ))}
+            </ul>
+            <p className="mt-4 text-muted-foreground text-sm">
+              Si deseas cambiar los botones que se muestran, modifica las
+              variables `NEXT_PUBLIC_CLICK_TO_CALL_ENABLED`,
+              `NEXT_PUBLIC_CHATBOT_ENABLED`, y `NEXT_PUBLIC_WHATSAPP_ENABLED`
+              en el archivo `.env` a `'true'` o `'false'`.
+            </p>
+          </section>
         </div>
       </main>
+
+      {/* El widget se muestra aquí para demostración en esta página */}
       <ClickToCallWidget />
     </>
   );
