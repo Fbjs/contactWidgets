@@ -15,12 +15,12 @@ export default function ChatWidget() {
   const [history, setHistory] = useState<ChatHistory>([]);
   const [inputValue, setInputValue] = useState("");
   const [isPending, startTransition] = useTransition();
-  const scrollViewportRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    if (scrollViewportRef.current) {
-      scrollViewportRef.current.scrollTo({
-        top: scrollViewportRef.current.scrollHeight,
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({
+        top: scrollAreaRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
@@ -51,8 +51,8 @@ export default function ChatWidget() {
       <div className="bg-primary text-primary-foreground p-4 rounded-t-lg">
         <h3 className="font-semibold text-lg">Asistente Virtual</h3>
       </div>
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4" ref={scrollViewportRef}>
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <div className="space-y-4">
           {history.map((msg, index) => (
             <div
               key={index}
