@@ -33,7 +33,7 @@ const chatFlow = ai.defineFlow(
   },
   async ({ history, newMessage }) => {
     const systemPrompt =
-      process.env.CHATBOT_SYSTEM_PROMPT ||
+      process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
       `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
     const response = await ai.generate({
