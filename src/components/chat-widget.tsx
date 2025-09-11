@@ -18,6 +18,15 @@ export default function ChatWidget() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    setHistory([
+      {
+        role: "model",
+        content: "¡Hola! ¿Cómo puedo ayudarte hoy?",
+      },
+    ]);
+  }, []);
+
   const scrollToBottom = () => {
     if (viewportRef.current) {
       viewportRef.current.scrollTo({
