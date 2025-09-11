@@ -11,6 +11,7 @@ export default function Home() {
   const chatbotPrompt = process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT;
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER;
   const whatsappMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE;
+  const clickToCallUrl = process.env.CLICK_TO_CALL_URL;
 
   const embedCode = `<iframe src="${
     new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:9002').origin
@@ -65,7 +66,7 @@ export default function Home() {
                   <CardHeader>
                     <CardTitle>Click to Call</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2">
                     <p className="text-sm text-muted-foreground">
                       El módulo de llamada está{' '}
                       <span className="font-semibold text-primary">
@@ -73,6 +74,12 @@ export default function Home() {
                       </span>
                       .
                     </p>
+                    <div className="text-sm">
+                      <p className="font-semibold">URL del Endpoint:</p>
+                      <p className="text-muted-foreground">
+                        {clickToCallUrl || 'No configurado'}
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               )}
