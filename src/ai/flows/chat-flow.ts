@@ -32,7 +32,9 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatMessageSchema,
   },
   async ({ history, newMessage }) => {
-    const systemPrompt = `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
+    const systemPrompt =
+      process.env.CHATBOT_SYSTEM_PROMPT ||
+      `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
     const response = await ai.generate({
       model: gpt4oMini,
