@@ -6,7 +6,7 @@ import { Send, User, Bot, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { sendChatMessage } from "@/app/actions";
 import type { ChatHistory, ChatMessage } from "@/ai/flows/chat-flow";
 import { cn } from "@/lib/utils";
@@ -15,12 +15,12 @@ export default function ChatWidget() {
   const [history, setHistory] = useState<ChatHistory>([]);
   const [inputValue, setInputValue] = useState("");
   const [isPending, startTransition] = useTransition();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
+    if (viewportRef.current) {
+      viewportRef.current.scrollTo({
+        top: viewportRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
@@ -51,7 +51,7 @@ export default function ChatWidget() {
       <div className="bg-primary text-primary-foreground p-4 rounded-t-lg">
         <h3 className="font-semibold text-lg">Asistente Virtual</h3>
       </div>
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 p-4" viewportRef={viewportRef}>
         <div className="space-y-4">
           {history.map((msg, index) => (
             <div
