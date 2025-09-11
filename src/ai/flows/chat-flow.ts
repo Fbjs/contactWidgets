@@ -32,31 +32,24 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatMessageSchema,
   },
   async ({ history, newMessage }) => {
-    // 1. Define el prompt del sistema. Usa la variable de entorno o un valor por defecto.
     const systemPrompt =
       process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
       `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
-    // 2. Construye el historial completo para la IA.
-    // El primer mensaje DEBE ser el del sistema para establecer el comportamiento.
-    // Luego se añade el historial existente, EXCLUYENDO el saludo inicial del bot si es el primer mensaje del historial.
-    const conversationHistory = history.length > 1 ? history.slice(1) : [];
-
+    // The conversation history from the client already includes the initial "model" greeting.
+    // We create the full history for the AI, starting with the system prompt,
+    // followed by the existing conversation.
     const fullHistory: ChatHistory = [
       { role: "system", content: systemPrompt },
-      ...conversationHistory,
+      ...history,
     ];
 
-    // 3. Llama al modelo de IA.
-    // 'prompt' es el nuevo mensaje del usuario.
-    // 'history' contiene el contexto del sistema y la conversación pasada.
     const response = await ai.generate({
       model: gpt4oMini,
       prompt: newMessage,
       history: fullHistory,
     });
 
-    // 4. Devuelve la respuesta del modelo.
     return {
       role: "model",
       content: response.text,
