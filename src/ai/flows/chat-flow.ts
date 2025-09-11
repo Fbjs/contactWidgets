@@ -12,7 +12,7 @@ import { z } from "zod";
 import { gpt4oMini } from "genkitx-openai";
 
 const ChatMessageSchema = z.object({
-  role: z.enum(["user", "model"]),
+  role: z.enum(["user", "model", "system"]),
   content: z.string(),
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
@@ -32,16 +32,29 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatMessageSchema,
   },
   async ({ history, newMessage }) => {
+    // 1. Define el prompt del sistema. Usa la variable de entorno o un valor por defecto.
     const systemPrompt =
       process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
       `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
+    // 2. Construye el historial completo para la IA.
+    // El primer mensaje establece el comportamiento del bot (rol 'system').
+    // Luego, se añade el historial de la conversación existente.
+    const fullHistory: ChatHistory = [
+      { role: "system", content: systemPrompt },
+      ...history,
+    ];
+
+    // 3. Llama al modelo de IA.
+    // 'prompt' es el nuevo mensaje del usuario.
+    // 'history' contiene el contexto del sistema y la conversación pasada.
     const response = await ai.generate({
       model: gpt4oMini,
       prompt: newMessage,
-      history: [{ role: "system", content: systemPrompt }, ...history],
+      history: fullHistory,
     });
 
+    // 4. Devuelve la respuesta del modelo.
     return {
       role: "model",
       content: response.text,
