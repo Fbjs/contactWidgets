@@ -35,14 +35,16 @@ const chatFlow = ai.defineFlow(
     // 1. Define el prompt del sistema. Usa la variable de entorno o un valor por defecto.
     const systemPrompt =
       process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
-      `Eres un amigable asistente virtual para el servicio Click2Call. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
+      `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
     // 2. Construye el historial completo para la IA.
-    // El primer mensaje establece el comportamiento del bot (rol 'system').
-    // Luego, se añade el historial de la conversación existente.
+    // El primer mensaje DEBE ser el del sistema para establecer el comportamiento.
+    // Luego se añade el historial existente, EXCLUYENDO el saludo inicial del bot si es el primer mensaje del historial.
+    const conversationHistory = history.length > 1 ? history.slice(1) : [];
+
     const fullHistory: ChatHistory = [
       { role: "system", content: systemPrompt },
-      ...history,
+      ...conversationHistory,
     ];
 
     // 3. Llama al modelo de IA.
