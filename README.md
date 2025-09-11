@@ -1,6 +1,6 @@
-# Widget Flotante de Click2Call y Asistente de Chat
+# Widget Flotante de Contacto
 
-Este es un proyecto Next.js que proporciona un widget flotante multi-función para sitios web, diseñado para mejorar la comunicación con los clientes.
+Este es un proyecto Next.js que proporciona un widget flotante multifunción para sitios web, diseñado para mejorar la comunicación con los clientes.
 
 ## Características
 
@@ -8,6 +8,7 @@ Este es un proyecto Next.js que proporciona un widget flotante multi-función pa
 - **Asistente de Chat IA**: Un chatbot, impulsado por OpenAI (ChatGPT), para responder preguntas de los usuarios en tiempo real.
 - **Botón de WhatsApp**: Un enlace directo para que los usuarios inicien una conversación por WhatsApp.
 - **Altamente Configurable**: El comportamiento del bot, los números de teléfono y los endpoints de la API se pueden configurar fácilmente a través de variables de entorno.
+- **Fácil de Incrustar**: Se puede añadir a cualquier sitio web copiando y pegando un simple fragmento de código `<iframe>`.
 
 ## Cómo Empezar
 
@@ -28,25 +29,31 @@ npm install
 
 ### 3. Configuración del Entorno
 
-Crea un archivo llamado `.env` en la raíz del proyecto y añade las siguientes variables. Puedes usar el archivo `.env.example` como guía.
+Crea un archivo llamado `.env` en la raíz del proyecto y añade las siguientes variables.
 
 ```plaintext
-# === Configuración de OpenAI ===
-# Clave de la API de OpenAI para el asistente de chat
+# === Clave de API ===
+# Clave de la API de OpenAI para el asistente de chat.
 OPENAI_API_KEY="sk-..."
 
-# === Configuración del Widget ===
-# Habilita ('true') o deshabilita ('false') cada botón del widget flotante.
+# === Configuración General del Widget ===
+# URL base de tu aplicación. Para desarrollo local, suele ser http://localhost:9002
+# Esta URL se usa para generar el código de inserción (iframe).
+NEXT_PUBLIC_URL="http://localhost:9002"
+
+# === Habilitar/Deshabilitar Módulos ===
+# Cambia a 'true' para mostrar un botón o a 'false' para ocultarlo.
 NEXT_PUBLIC_CLICK_TO_CALL_ENABLED="true"
 NEXT_PUBLIC_CHATBOT_ENABLED="true"
 NEXT_PUBLIC_WHATSAPP_ENABLED="true"
 
 # === Configuración del Asistente de Chat ===
-# (Opcional) Instrucciones personalizadas para el chatbot. Define su personalidad y contexto.
+# (Opcional) Instrucciones para el chatbot. Define su personalidad, contexto y cómo debe responder.
 NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT="Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable."
 
 # === Configuración de Click to Call ===
 # URL del servicio o endpoint que se encargará de realizar la llamada telefónica.
+# La aplicación añadirá automáticamente el número de teléfono al final (ej: https://tu-api.com/call/569xxxxxxxx).
 CLICK_TO_CALL_URL="https://tu-api.com/call"
 
 # === Configuración de WhatsApp ===
@@ -60,25 +67,20 @@ NEXT_PUBLIC_WHATSAPP_MESSAGE="Hola, estoy interesado en sus servicios."
 
 ### 4. Ejecutar el Servidor de Desarrollo
 
-Una vez instaladas las dependencias y configurado el archivo `.env`, puedes iniciar el servidor de desarrollo:
+Una vez instaladas las dependencias y configurado el archivo `.env`, puedes iniciar el servidor de desarrollo de Next.js y el servidor de Genkit en dos terminales separadas.
 
+**Terminal 1 (Next.js):**
 ```bash
 npm run dev
 ```
 
-Esto iniciará la aplicación de Next.js. Adicionalmente, necesitas iniciar el servidor de Genkit para los flujos de IA en una terminal separada:
-
+**Terminal 2 (Genkit):**
 ```bash
 npm run genkit:watch
 ```
 
-Abre [http://localhost:9002](http://localhost:9002) en tu navegador para ver la aplicación en funcionamiento.
+Abre [http://localhost:9002](http://localhost:9002) en tu navegador para ver la aplicación y las instrucciones de instalación.
 
-## Scripts Disponibles
+## Cómo Incrustar el Widget
 
-- `npm run dev`: Inicia el servidor de desarrollo de Next.js.
-- `npm run genkit:dev`: Inicia el servidor de Genkit una vez.
-- `npm run genkit:watch`: Inicia el servidor de Genkit y lo reinicia automáticamente al detectar cambios en los flujos.
-- `npm run build`: Compila la aplicación para producción.
-- `npm run start`: Inicia un servidor de producción de Next.js.
-- `npm run lint`: Ejecuta el linter de ESLint para analizar el código.
+Ve a la página principal de la aplicación ([http://localhost:9002](http://localhost:9002)) y copia el código `<iframe>` que se proporciona. Pega este código en el HTML de tu sitio web, justo antes de la etiqueta de cierre `</body>`. El widget aparecerá en la esquina inferior derecha.

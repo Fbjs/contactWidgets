@@ -1,23 +1,19 @@
-
-import ClickToCallWidget from "@/components/click-to-call-widget";
+import ClickToCallWidget from '@/components/click-to-call-widget';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   const isClickToCallEnabled =
-    process.env.NEXT_PUBLIC_CLICK_TO_CALL_ENABLED === "true";
-  const isChatbotEnabled = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === "true";
+    process.env.NEXT_PUBLIC_CLICK_TO_CALL_ENABLED === 'true';
+  const isChatbotEnabled = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === 'true';
   const isWhatsappEnabled =
-    process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true";
+    process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === 'true';
 
-  const enabledWidgets = [
-    isClickToCallEnabled && "Click to Call",
-    isChatbotEnabled && "Asistente de Chat",
-    isWhatsappEnabled && "WhatsApp",
-  ]
-    .filter(Boolean)
-    .join(", ");
+  const chatbotPrompt = process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT;
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER;
+  const whatsappMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE;
 
   const embedCode = `<iframe src="${
-    new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:9002").origin
+    new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:9002').origin
   }/embed" style="position: fixed; bottom: 0; right: 0; border: none; width: 400px; height: 600px; z-index: 9999;"></iframe>`;
 
   return (
@@ -60,20 +56,91 @@ export default function Home() {
               Configuración Actual
             </h2>
             <p className="mb-4">
-              La configuración del widget se gestiona desde el archivo `.env`
-              de este proyecto. Según tu configuración actual, los siguientes
-              módulos están{" "}
-              <span className="font-semibold text-primary">activados</span>:
+              La configuración del widget se gestiona desde el archivo `.env` de
+              este proyecto. A continuación se muestra la configuración activa:
             </p>
-            <ul className="list-disc list-inside bg-card p-4 rounded-lg shadow">
-              {enabledWidgets.split(", ").map((widget) => (
-                <li key={widget}>{widget}</li>
-              ))}
-            </ul>
+            <div className="grid gap-6">
+              {isClickToCallEnabled && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Click to Call</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      El módulo de llamada está{' '}
+                      <span className="font-semibold text-primary">
+                        activado
+                      </span>
+                      .
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+              {isChatbotEnabled && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Asistente de Chat (Bot)</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      El módulo de chat está{' '}
+                      <span className="font-semibold text-primary">
+                        activado
+                      </span>
+                      .
+                    </p>
+                    <p className="text-sm font-semibold">
+                      Instrucción del sistema (Prompt):
+                    </p>
+                    <blockquote className="border-l-4 pl-4 italic text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
+                      {chatbotPrompt ||
+                        'No se ha definido un prompt de sistema.'}
+                    </blockquote>
+                  </CardContent>
+                </Card>
+              )}
+              {isWhatsappEnabled && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>WhatsApp</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      El módulo de WhatsApp está{' '}
+                      <span className="font-semibold text-primary">
+                        activado
+                      </span>
+                      .
+                    </p>
+                    <div className="text-sm">
+                      <p className="font-semibold">Número de teléfono:</p>
+                      <p className="text-muted-foreground">
+                        {whatsappNumber || 'No configurado'}
+                      </p>
+                    </div>
+                    <div className="text-sm">
+                      <p className="font-semibold">Mensaje por defecto:</p>
+                      <p className="text-muted-foreground">
+                        {whatsappMessage || 'No configurado'}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
             <p className="mt-4 text-muted-foreground text-sm">
-              Si deseas cambiar los botones que se muestran, modifica las
-              variables `NEXT_PUBLIC_CLICK_TO_CALL_ENABLED`,
-              `NEXT_PUBLIC_CHATBOT_ENABLED`, y `NEXT_PUBLIC_WHATSAPP_ENABLED`
+              Si deseas cambiar qué módulos se muestran, modifica las variables{' '}
+              <code className="bg-muted/50 p-1 rounded">
+                NEXT_PUBLIC_CLICK_TO_CALL_ENABLED
+              </code>
+              ,{' '}
+              <code className="bg-muted/50 p-1 rounded">
+                NEXT_PUBLIC_CHATBOT_ENABLED
+              </code>
+              , y{' '}
+              <code className="bg-muted/50 p-1 rounded">
+                NEXT_PUBLIC_WHATSAPP_ENABLED
+              </code>{' '}
               en el archivo `.env` a `'true'` o `'false'`.
             </p>
           </section>
