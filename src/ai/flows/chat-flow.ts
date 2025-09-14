@@ -25,11 +25,17 @@ const ChatInputSchema = z.object({
 });
 export type ChatInput = z.infer<typeof ChatInputSchema>;
 
+const ChatOutputSchema = z.object({
+  message: ChatMessageSchema,
+  logs: z.array(z.string()),
+});
+export type ChatOutput = z.infer<typeof ChatOutputSchema>;
+
 const chatFlow = ai.defineFlow(
   {
     name: "chatFlow",
     inputSchema: ChatInputSchema,
-    outputSchema: ChatMessageSchema,
+    outputSchema: ChatOutputSchema,
   },
   async ({ history, newMessage }) => {
     const systemPrompt =
@@ -43,6 +49,11 @@ const chatFlow = ai.defineFlow(
       { role: "system", content: systemPrompt },
       ...history,
     ];
+    
+    const logs = [
+      `System Prompt: ${systemPrompt}`,
+      `Conversation History Sent to AI: ${JSON.stringify(fullHistory, null, 2)}`
+    ];
 
     console.log("System Prompt:", systemPrompt);
     console.log("Conversation History Sent to AI:", JSON.stringify(fullHistory, null, 2));
@@ -55,12 +66,15 @@ const chatFlow = ai.defineFlow(
     });
 
     return {
-      role: "model",
-      content: response.text,
+      message: {
+        role: "model",
+        content: response.text,
+      },
+      logs: logs
     };
   }
 );
 
-export async function chat(input: ChatInput): Promise<ChatMessage> {
+export async function chat(input: ChatInput): Promise<ChatOutput> {
   return chatFlow(input);
 }

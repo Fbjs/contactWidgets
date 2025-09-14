@@ -35,7 +35,11 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function ClickToCallWidget() {
+interface ClickToCallWidgetProps {
+  onNewLog?: (logs: string[]) => void;
+}
+
+export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) {
   const [isCallInputOpen, setIsCallInputOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { toast } = useToast();
@@ -121,7 +125,7 @@ export default function ClickToCallWidget() {
       ref={widgetRef}
       className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
-      {isChatbotEnabled && isChatOpen && <ChatWidget />}
+      {isChatbotEnabled && isChatOpen && <ChatWidget onNewLog={onNewLog} />}
 
       {isWhatsappEnabled && (
         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">

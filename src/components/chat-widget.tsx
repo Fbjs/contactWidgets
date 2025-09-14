@@ -11,7 +11,11 @@ import { sendChatMessage } from "@/app/actions";
 import type { ChatHistory, ChatMessage } from "@/ai/flows/chat-flow";
 import { cn } from "@/lib/utils";
 
-export default function ChatWidget() {
+interface ChatWidgetProps {
+  onNewLog?: (logs: string[]) => void;
+}
+
+export default function ChatWidget({ onNewLog }: ChatWidgetProps) {
   const [history, setHistory] = useState<ChatHistory>([]);
   const [inputValue, setInputValue] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -55,8 +59,11 @@ export default function ChatWidget() {
     inputRef.current?.focus();
 
     startTransition(async () => {
-      const botResponse = await sendChatMessage(newHistory, inputValue);
+      const { message: botResponse, logs } = await sendChatMessage(newHistory, inputValue);
       setHistory((prevHistory) => [...prevHistory, botResponse]);
+      if (onNewLog) {
+        onNewLog(logs);
+      }
     });
   };
 

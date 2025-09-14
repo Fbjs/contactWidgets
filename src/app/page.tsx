@@ -1,7 +1,12 @@
+
+"use client";
+
+import { useState } from 'react';
 import ClickToCallWidget from '@/components/click-to-call-widget';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
+  const [logs, setLogs] = useState<string[]>([]);
   const isClickToCallEnabled =
     process.env.NEXT_PUBLIC_CLICK_TO_CALL_ENABLED === 'true';
   const isChatbotEnabled = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === 'true';
@@ -16,6 +21,10 @@ export default function Home() {
   const embedCode = `<iframe src="${
     new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:9002').origin
   }/embed" style="position: fixed; bottom: 0; right: 0; border: none; width: 400px; height: 600px; z-index: 9999;"></iframe>`;
+
+  const handleNewLog = (newLogs: string[]) => {
+    setLogs(newLogs);
+  };
 
   return (
     <>
@@ -151,11 +160,31 @@ export default function Home() {
               en el archivo `.env` a `'true'` o `'false'`.
             </p>
           </section>
+
+          {isChatbotEnabled && (
+            <section>
+              <h2 className="text-2xl font-bold mb-4 border-b pb-2">
+                Consola de Depuración del Chat
+              </h2>
+              <p className="mb-4 text-sm text-muted-foreground">
+                A continuación se muestra el contexto exacto (prompt del
+                sistema e historial) que se envió a la API de OpenAI en el
+                último mensaje.
+              </p>
+              <div className="bg-gray-900 text-white font-mono p-4 rounded-lg shadow-inner">
+                <pre className="text-xs whitespace-pre-wrap">
+                  {logs.length > 0
+                    ? logs.join('\n\n' + '-'.repeat(50) + '\n\n')
+                    : 'Aún no se han enviado mensajes...'}
+                </pre>
+              </div>
+            </section>
+          )}
         </div>
       </main>
 
       {/* El widget se muestra aquí para demostración en esta página */}
-      <ClickToCallWidget />
+      <ClickToCallWidget onNewLog={handleNewLog} />
     </>
   );
 }
