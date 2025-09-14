@@ -22,15 +22,6 @@ export default function ChatWidget({ onNewLog }: ChatWidgetProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setHistory([
-      {
-        role: "model",
-        content: "¡Hola! ¿Cómo puedo ayudarte hoy?",
-      },
-    ]);
-  }, []);
-
   const scrollToBottom = () => {
     if (viewportRef.current) {
       viewportRef.current.scrollTo({
@@ -59,7 +50,7 @@ export default function ChatWidget({ onNewLog }: ChatWidgetProps) {
     inputRef.current?.focus();
 
     startTransition(async () => {
-      const { message: botResponse, logs } = await sendChatMessage(newHistory, inputValue);
+      const { message: botResponse, logs } = await sendChatMessage(newHistory);
       setHistory((prevHistory) => [...prevHistory, botResponse]);
       if (onNewLog) {
         onNewLog(logs);

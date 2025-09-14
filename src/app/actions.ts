@@ -59,8 +59,7 @@ export async function clickToCall(data: ClickToCallValues) {
 }
 
 export async function sendChatMessage(
-  history: ChatHistory,
-  newMessage: string
+  history: ChatHistory
 ): Promise<ChatOutput> {
-  return await chat({ history, newMessage });
+  return await chat({ history });
 }
