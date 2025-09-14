@@ -44,6 +44,10 @@ const chatFlow = ai.defineFlow(
       ...history,
     ];
 
+    console.log("System Prompt:", systemPrompt);
+    console.log("Conversation History Sent to AI:", JSON.stringify(fullHistory, null, 2));
+
+
     const response = await ai.generate({
       model: gpt4oMini,
       prompt: newMessage,
