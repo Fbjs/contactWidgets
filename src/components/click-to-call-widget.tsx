@@ -56,10 +56,7 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        widgetRef.current &&
-        !widgetRef.current.contains(event.target as Node)
-      ) {
+      if (widgetRef.current && !widgetRef.current.contains(event.target as Node)) {
         setIsCallInputOpen(false);
         setIsChatOpen(false);
       }
@@ -93,15 +90,15 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
     // This prevents the form from submitting when we just want to open the input
     if (!isCallInputOpen) {
       e.preventDefault();
-      setIsCallInputOpen(true);
       setIsChatOpen(false);
+      setIsCallInputOpen(true);
     }
     // If the input is already open, the default form submission will proceed.
   };
 
   const handleChatButtonClick = () => {
+    setIsCallInputOpen(false);
     setIsChatOpen((prev) => !prev);
-    if (isCallInputOpen) setIsCallInputOpen(false);
   };
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER;
@@ -125,7 +122,7 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
       ref={widgetRef}
       className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
-      {isChatbotEnabled && isChatOpen && <ChatWidget onNewLog={onNewLog} />}
+      {isChatOpen && <ChatWidget onNewLog={onNewLog} />}
 
       {isWhatsappEnabled && (
         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
