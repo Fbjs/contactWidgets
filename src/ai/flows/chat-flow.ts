@@ -38,6 +38,12 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
     ...history,
   ];
 
+  // OpenAI requires at least one message from a "user"
+  if (!fullHistory.some(msg => msg.role === 'user')) {
+    throw new Error("Invalid history: No user messages found.");
+  }
+
+
   const logs = [
     `System Prompt: ${systemPrompt}`,
     `Conversation History Sent to AI: ${JSON.stringify(fullHistory, null, 2)}`,
