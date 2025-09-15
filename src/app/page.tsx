@@ -1,12 +1,14 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ClickToCallWidget from '@/components/click-to-call-widget';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
+  const [clickToCallUrl, setClickToCallUrl] = useState<string | null>(null);
+  
   const isClickToCallEnabled =
     process.env.NEXT_PUBLIC_CLICK_TO_CALL_ENABLED === 'true';
   const isChatbotEnabled = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === 'true';
@@ -16,7 +18,12 @@ export default function Home() {
   const chatbotPrompt = process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT;
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER;
   const whatsappMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE;
-  const clickToCallUrl = process.env.CLICK_TO_CALL_URL;
+  
+  useEffect(() => {
+    // Esto se ejecuta solo en el cliente, después de la hidratación
+    setClickToCallUrl(process.env.CLICK_TO_CALL_URL || 'No configurado');
+  }, []);
+
 
   const embedCode = `<iframe src="${
     new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:9002').origin
@@ -86,7 +93,7 @@ export default function Home() {
                     <div className="text-sm">
                       <p className="font-semibold">URL del Endpoint:</p>
                       <p className="text-muted-foreground">
-                        {clickToCallUrl || 'No configurado'}
+                        {clickToCallUrl !== null ? clickToCallUrl : 'Cargando...'}
                       </p>
                     </div>
                   </CardContent>
