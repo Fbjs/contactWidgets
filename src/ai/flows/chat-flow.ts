@@ -19,55 +19,46 @@ export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export type ChatHistory = ChatMessage[];
 
-const ChatInputSchema = z.object({
-  history: z.array(ChatMessageSchema),
-});
-export type ChatInput = z.infer<typeof ChatInputSchema>;
+export type ChatOutput = {
+  message: ChatMessage;
+  logs: string[];
+};
 
-const ChatOutputSchema = z.object({
-  message: ChatMessageSchema,
-  logs: z.array(z.string()),
-});
-export type ChatOutput = z.infer<typeof ChatOutputSchema>;
+export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
+  const systemPrompt =
+    process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
+    `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
-export const chatFlow = ai.defineFlow(
-  {
-    name: "chatFlow",
-    inputSchema: ChatInputSchema,
-    outputSchema: ChatOutputSchema,
-  },
-  async ({ history }) => {
-    const systemPrompt =
-      process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
-      `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
-
-    const fullHistory: ChatHistory = [
-      { role: "system", content: systemPrompt },
-      ...history,
-    ];
-
-    const logs = [
-      `System Prompt: ${systemPrompt}`,
-      `Conversation History Sent to AI: ${JSON.stringify(fullHistory, null, 2)}`,
-    ];
-
-    console.log("System Prompt:", systemPrompt);
-    console.log(
-      "Conversation History Sent to AI:",
-      JSON.stringify(fullHistory, null, 2)
-    );
-
-    const response = await ai.generate({
-      model: gpt4oMini,
-      history: fullHistory,
-    });
-
-    return {
-      message: {
-        role: "model",
-        content: response.text,
-      },
-      logs: logs,
-    };
+  if (!history || history.length === 0) {
+    throw new Error("Chat history cannot be empty.");
   }
-);
+
+  const fullHistory: ChatHistory = [
+    { role: "system", content: systemPrompt },
+    ...history,
+  ];
+
+  const logs = [
+    `System Prompt: ${systemPrompt}`,
+    `Conversation History Sent to AI: ${JSON.stringify(fullHistory, null, 2)}`,
+  ];
+
+  console.log("System Prompt:", systemPrompt);
+  console.log(
+    "Conversation History Sent to AI:",
+    JSON.stringify(fullHistory, null, 2)
+  );
+
+  const response = await ai.generate({
+    model: gpt4oMini,
+    history: fullHistory,
+  });
+
+  return {
+    message: {
+      role: "model",
+      content: response.text,
+    },
+    logs: logs,
+  };
+}
