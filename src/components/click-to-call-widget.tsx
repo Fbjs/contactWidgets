@@ -61,7 +61,6 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
         !widgetRef.current.contains(event.target as Node)
       ) {
         setIsCallInputOpen(false);
-        if (isChatOpen) return;
         setIsChatOpen(false);
       }
     }
@@ -69,7 +68,7 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [widgetRef, isChatOpen]);
+  }, [widgetRef]);
 
   const onSubmit = async (values: ClickToCallValues) => {
     const result = await clickToCall(values);
