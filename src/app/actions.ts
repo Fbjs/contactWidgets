@@ -1,7 +1,7 @@
 "use server";
 
 import { ClickToCallSchema, ClickToCallValues } from "@/lib/schemas";
-import { chat, ChatHistory, ChatOutput } from "@/ai/flows/chat-flow";
+import { chatFlow, type ChatHistory, type ChatOutput } from "@/ai/flows/chat-flow";
 
 export async function clickToCall(data: ClickToCallValues) {
   const validatedFields = ClickToCallSchema.safeParse(data);
@@ -61,5 +61,5 @@ export async function clickToCall(data: ClickToCallValues) {
 export async function sendChatMessage(
   history: ChatHistory
 ): Promise<ChatOutput> {
-  return await chat({ history });
+  return await chatFlow({ history });
 }

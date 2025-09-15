@@ -2,7 +2,7 @@
 /**
  * @fileOverview A simple chatbot flow that responds to user messages.
  *
- * - chat - A function that handles the chat conversation.
+ * - chatFlow - A function that handles the chat conversation.
  * - ChatMessage - The type for a single chat message.
  * - ChatHistory - The type for the conversation history.
  */
@@ -30,7 +30,7 @@ const ChatOutputSchema = z.object({
 });
 export type ChatOutput = z.infer<typeof ChatOutputSchema>;
 
-const chatFlow = ai.defineFlow(
+export const chatFlow = ai.defineFlow(
   {
     name: "chatFlow",
     inputSchema: ChatInputSchema,
@@ -71,7 +71,3 @@ const chatFlow = ai.defineFlow(
     };
   }
 );
-
-export async function chat(input: ChatInput): Promise<ChatOutput> {
-  return chatFlow(input);
-}
