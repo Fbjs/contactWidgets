@@ -9,10 +9,9 @@
 
 import { ai } from "@/ai/genkit";
 import { z } from "zod";
-import { gpt4oMini } from "genkitx-openai";
 
 const ChatMessageSchema = z.object({
-  role: z.enum(["user", "model", "system"]),
+  role: z.enum(["user", "model"]),
   content: z.string(),
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
@@ -29,19 +28,11 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
     process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
     `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
-  if (!history || history.length === 0) {
-    throw new Error("Chat history cannot be empty.");
-  }
-
-  const fullHistory: ChatHistory = [
+  const fullHistory = [
     { role: "system", content: systemPrompt },
     ...history,
-  ];
-
-  // OpenAI requires at least one message from a "user"
-  if (!fullHistory.some((msg) => msg.role === "user")) {
-    throw new Error("Invalid history: No user messages found.");
-  }
+  ] as { role: "system" | "user" | "model", content: string }[];
+  
 
   const logs = [
     `System Prompt: ${systemPrompt}`,
@@ -55,7 +46,7 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
   );
 
   const response = await ai.generate({
-    model: gpt4oMini,
+    model: "googleai/gemini-1.5-flash-latest",
     history: fullHistory,
   });
 

@@ -1,13 +1,11 @@
 import {genkit} from 'genkit';
-import {openAI} from 'genkitx-openai';
+import {googleAI} from '@genkit-ai/googleai';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
 export const ai = genkit({
   plugins: [
-    openAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    }),
+    googleAI(),
   ],
 });
