@@ -32,11 +32,15 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
     throw new Error("Chat history cannot be empty.");
   }
   
+  if (!history.some(m => m.role === 'user')) {
+    throw new Error("Chat history must contain at least one user message.");
+  }
+
+
   const fullHistory = [
     { role: "system", content: systemPrompt },
     ...history,
   ] as { role: "system" | "user" | "model", content: string }[];
-  
 
   const logs = [
     `System Prompt: ${systemPrompt}`,
@@ -50,7 +54,7 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
   );
 
   const response = await ai.generate({
-    model: "googleai/gemini-1.5-flash-latest",
+    model: 'gemini-pro',
     history: fullHistory,
   });
 

@@ -5,7 +5,7 @@ Este es un proyecto Next.js que proporciona un widget flotante multifunción par
 ## Características
 
 - **Botón de Llamada (Click to Call)**: Permite a los usuarios ingresar su número de teléfono para solicitar una llamada inmediata.
-- **Asistente de Chat IA**: Un chatbot, impulsado por Google AI (Gemini), para responder preguntas de los usuarios en tiempo real.
+- **Asistente de Chat IA**: Un chatbot, impulsado por OpenAI, para responder preguntas de los usuarios en tiempo real.
 - **Botón de WhatsApp**: Un enlace directo para que los usuarios inicien una conversación por WhatsApp.
 - **Altamente Configurable**: El comportamiento del bot, los números de teléfono y los endpoints de la API se pueden configurar fácilmente a través de variables de entorno.
 - **Fácil de Incrustar**: Se puede añadir a cualquier sitio web copiando y pegando un simple fragmento de código `<iframe>`.
@@ -33,9 +33,9 @@ Crea un archivo llamado `.env` en la raíz del proyecto y añade las siguientes 
 
 ```plaintext
 # === Clave de API ===
-# Clave de la API de Google para el asistente de chat (Gemini).
-# Obtenla en https://aistudio.google.com/app/apikey
-GEMINI_API_KEY="tu-api-key-aqui"
+# Clave de la API de OpenAI para el asistente de chat.
+# Obtenla en https://platform.openai.com/api-keys
+OPENAI_API_KEY="tu-api-key-aqui"
 
 # === Configuración General del Widget ===
 # URL base de tu aplicación. Para desarrollo local, suele ser http://localhost:9002
