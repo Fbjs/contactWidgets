@@ -1,7 +1,12 @@
 "use server";
 
 import { ClickToCallSchema, ClickToCallValues } from "@/lib/schemas";
-import { chatFlow, type ChatHistory, type ChatOutput } from "@/ai/flows/chat-flow";
+import {
+  chatFlow,
+  type ChatHistory,
+  type ChatInput,
+  type ChatOutput,
+} from "@/ai/flows/chat-flow";
 
 export async function clickToCall(data: ClickToCallValues) {
   const validatedFields = ClickToCallSchema.safeParse(data);
@@ -17,7 +22,7 @@ export async function clickToCall(data: ClickToCallValues) {
   // Remove spaces and hyphens from the phone number
   const sanitizedPhone = phone.replace(/[\s-]/g, "");
   const phoneNumber = `56${sanitizedPhone}`;
-  
+
   const baseUrl = process.env.CLICK_TO_CALL_URL;
   if (!baseUrl) {
     console.error("La variable de entorno CLICK_TO_CALL_URL no está definida.");
@@ -26,7 +31,7 @@ export async function clickToCall(data: ClickToCallValues) {
       error: "La configuración del servidor está incompleta.",
     };
   }
-  
+
   const url = `${baseUrl}/${phoneNumber}`;
 
   try {
@@ -58,8 +63,6 @@ export async function clickToCall(data: ClickToCallValues) {
   }
 }
 
-export async function sendChatMessage(
-  history: ChatHistory
-): Promise<ChatOutput> {
-  return await chatFlow(history);
+export async function sendChatMessage(input: ChatInput): Promise<ChatOutput> {
+  return await chatFlow(input);
 }
