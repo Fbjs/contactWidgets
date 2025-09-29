@@ -4,7 +4,6 @@ import { ClickToCallSchema, ClickToCallValues } from "@/lib/schemas";
 import {
   chatFlow,
   type ChatHistory,
-  type ChatInput,
   type ChatOutput,
 } from "@/ai/flows/chat-flow";
 
@@ -63,6 +62,6 @@ export async function clickToCall(data: ClickToCallValues) {
   }
 }
 
-export async function sendChatMessage(input: ChatInput): Promise<ChatOutput> {
-  return await chatFlow(input);
+export async function sendChatMessage(history: ChatHistory): Promise<ChatOutput> {
+  return await chatFlow(history);
 }

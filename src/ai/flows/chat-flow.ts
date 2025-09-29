@@ -19,17 +19,12 @@ export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export type ChatHistory = ChatMessage[];
 
-const ChatInputSchema = z.object({
-  history: z.array(ChatMessageSchema),
-});
-export type ChatInput = z.infer<typeof ChatInputSchema>;
-
 export type ChatOutput = {
   message: ChatMessage;
   logs: string[];
 };
 
-export async function chatFlow({ history }: ChatInput): Promise<ChatOutput> {
+export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
   const systemPrompt =
     process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
     `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
@@ -64,10 +59,15 @@ export async function chatFlow({ history }: ChatInput): Promise<ChatOutput> {
     history: fullHistory,
   });
 
+  const responseText = response.text;
+  if (!responseText) {
+    throw new Error("AI response was empty. The request may have been blocked.");
+  }
+
   return {
     message: {
       role: "model",
-      content: response.text,
+      content: responseText,
     },
     logs: logs,
   };

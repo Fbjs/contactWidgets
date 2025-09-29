@@ -50,9 +50,7 @@ export default function ChatWidget({ onNewLog }: ChatWidgetProps) {
     inputRef.current?.focus();
 
     startTransition(async () => {
-      const { message: botResponse, logs } = await sendChatMessage({
-        history: newHistory,
-      });
+      const { message: botResponse, logs } = await sendChatMessage(newHistory);
       setHistory((prevHistory) => [...prevHistory, botResponse]);
       if (onNewLog) {
         onNewLog(logs);
