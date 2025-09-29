@@ -8,6 +8,7 @@
  */
 
 import { ai } from "@/ai/genkit";
+import { gpt4oMini } from "genkitx-openai";
 import { z } from "zod";
 
 const ChatMessageSchema = z.object({
@@ -54,7 +55,7 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
   );
 
   const response = await ai.generate({
-    model: 'gemini-pro',
+    model: gpt4oMini,
     history: fullHistory,
   });
 
