@@ -28,6 +28,10 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
     process.env.NEXT_PUBLIC_CHATBOT_SYSTEM_PROMPT ||
     `Eres un amigable asistente virtual. Tu objetivo es ayudar a los usuarios con sus preguntas. Sé conciso y amable.`;
 
+  if (!history || history.length === 0) {
+    throw new Error("Chat history cannot be empty.");
+  }
+  
   const fullHistory = [
     { role: "system", content: systemPrompt },
     ...history,
