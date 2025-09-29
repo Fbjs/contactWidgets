@@ -65,7 +65,7 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [widgetRef]);
+  }, []);
 
   const onSubmit = async (values: ClickToCallValues) => {
     const result = await clickToCall(values);
@@ -87,13 +87,15 @@ export default function ClickToCallWidget({ onNewLog }: ClickToCallWidgetProps) 
   };
 
   const handleCallButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // This prevents the form from submitting when we just want to open the input
-    if (!isCallInputOpen) {
-      e.preventDefault();
+    e.preventDefault();
+    if (isCallInputOpen) {
+      // If input is open, let the form submit
+      form.handleSubmit(onSubmit)();
+    } else {
+      // If input is closed, open it and the chat
       setIsChatOpen(false);
       setIsCallInputOpen(true);
     }
-    // If the input is already open, the default form submission will proceed.
   };
 
   const handleChatButtonClick = () => {
