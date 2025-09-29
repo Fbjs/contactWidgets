@@ -47,13 +47,17 @@ export default function ChatWidget({ onNewLog }: ChatWidgetProps) {
 
     setHistory(newHistory);
     setInputValue("");
-    inputRef.current?.focus();
 
     startTransition(async () => {
-      const { message: botResponse, logs } = await sendChatMessage(newHistory);
-      setHistory((prevHistory) => [...prevHistory, botResponse]);
-      if (onNewLog) {
-        onNewLog(logs);
+      try {
+        const { message: botResponse, logs } = await sendChatMessage(newHistory);
+        setHistory((prevHistory) => [...prevHistory, botResponse]);
+        if (onNewLog) {
+          onNewLog(logs);
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+        // Optionally, show an error message to the user
       }
     });
   };
