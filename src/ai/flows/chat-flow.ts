@@ -7,7 +7,7 @@
  * - ChatHistory - The type for the conversation history.
  */
 
-import { ai } from "@/ai/genkit";
+import { openai } from "@/ai/genkit";
 import { gpt4oMini } from "genkitx-openai";
 import { z } from "zod";
 
@@ -54,12 +54,14 @@ export async function chatFlow(history: ChatHistory): Promise<ChatOutput> {
     JSON.stringify(fullHistory, null, 2)
   );
 
-  const response = await ai.generate({
-    model: gpt4oMini,
-    history: fullHistory,
+  const completion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo", // o el modelo que prefieras
+    messages: fullHistory.map(({ role, content }) => ({
+      role: role === "model" ? "assistant" : role,
+      content,
+    })),
   });
-
-  const responseText = response.text;
+  const responseText = completion.choices[0]?.message?.content;
   if (!responseText) {
     throw new Error("AI response was empty. The request may have been blocked.");
   }
